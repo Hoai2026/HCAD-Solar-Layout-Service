@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="AutoCADによる太陽光発電レイアウト作図・トレース（PDF/手描き）ならHCAD Solar Layout Service。迅速対応・丁寧な図面作成。" />
+  <title>HCAD Solar Layout Service</title>
+
+  <style>
+    :root{
+      --bg:#ffffff;
+      --card:#ffffff;
+      --text:#0f172a;        /* slate-900 */
+      --muted:#475569;       /* slate-600 */
+      --line:#e2e8f0;        /* slate-200 */
+      --soft:#f8fafc;        /* slate-50 */
+      --soft2:#f1f5f9;       /* slate-100 */
+      --accent:#0ea5e9;      /* sky-500 */
+      --accent2:#0284c7;     /* sky-600 */
+      --ok:#16a34a;
+      --shadow: 0 10px 30px rgba(2,8,23,.08);
+      --radius: 18px;
+      --radius2: 14px;
+      --max: 1400px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Kaku Gothic ProN", "Hiragino Sans",
+                   "Noto Sans JP", "Yu Gothic", Meiryo, Arial, sans-serif;
+      color:var(--text);
+      background:linear-gradient(180deg, #ffffff 0%, #ffffff 55%, #f8fafc 100%);
+      letter-spacing:.02em;
+           font-size:18px;
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .container{ width:min(var(--max), calc(100% - 48px)); margin:0 auto; }
+
+    /* Header */
+    header{
+      position:sticky; top:0; z-index:50;
+      background:rgba(255,255,255,.86);
+      backdrop-filter:saturate(180%) blur(10px);
+      border-bottom:1px solid var(--line);
+    }
+    .nav{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 0;
+      gap:18px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      min-width: 220px;
+    }
+    .logo{
+      width:40px; height:40px; border-radius:12px;
+      background:linear-gradient(135deg, var(--accent), #22c55e);
+      box-shadow: 0 8px 18px rgba(14,165,233,.25);
+      position:relative;
+    }
+    .logo:after{
+      content:"";
+      position:absolute; inset:10px;
+      border-radius:10px;
+      border:2px solid rgba(255,255,255,.75);
+    }
+    .brand-title{
+      line-height:1.15;
+    }
+    .brand-title strong{ display:block; font-size:18px; }
+    .brand-title span{ display:block; font-size:14px; color:var(--muted); }
+
+    nav ul{
+      list-style:none; padding:0; margin:0;
+      display:flex; align-items:center; gap:16px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    nav a{
+      font-size:16px; color:var(--muted);
+      padding:8px 10px;
+      border-radius:10px;
+    }
+    nav a:hover{
+      background:var(--soft2);
+      text-decoration:none;
+      color:var(--text);
+    }
+    .cta{
+      display:flex; align-items:center; gap:10px;
+      min-width: 220px;
+      justify-content:flex-end;
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:8px;
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:var(--card);
+      box-shadow: 0 6px 18px rgba(2,8,23,.06);
+      font-size:15px;
+      white-space:nowrap;
+    }
+    .btn.primary{
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      color:#fff;
+      border-color:transparent;
+      box-shadow: 0 12px 26px rgba(2,132,199,.25);
+    }
+    .btn.primary:hover{ filter:brightness(0.98); text-decoration:none; }
+    .btn:hover{ text-decoration:none; }
+.slider{
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.slider .slide{
+  width: 100%;
+  height: auto;
+  display: none;
+}
+
+.slider .slide.active{
+  display: block;
+}   /* Hero */
+    .hero{
+      padding:30px 0 0px;
+    }
+.hero-grid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:22px;
+}
+    .hero-card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      padding:26px;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero-card:before{
+      content:"";
+      position:absolute;
+      width:520px; height:520px;
+      right:-330px; top:-340px;
+      background: radial-gradient(circle at 30% 30%, rgba(14,165,233,.22), rgba(34,197,94,.14) 55%, rgba(255,255,255,0) 70%);
+      transform:rotate(18deg);
+    }
+    .hero h1{
+      margin:0 0 12px;
+      font-size:30px;
+      letter-spacing:.03em;
+    }
+    .hero p{
+      margin:0 0 16px;
+      color:var(--muted);
+      line-height:1.8;
+      font-size:16px;
+      position:relative;
+      z-index:1;
+    }
+    .badges{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin:18px 0 0;
+      position:relative; z-index:1;
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      background:var(--soft);
+      border:1px solid var(--line);
+      font-size:12px;
+      color:var(--muted);
+    }
+    .dot{
+      width:8px; height:8px; border-radius:50%;
+      background: var(--ok);
+      box-shadow: 0 0 0 4px rgba(22,163,74,.12);
+      flex:0 0 auto;
+    }
+
+    .hero-side{
+      display:grid;
+      grid-template-rows: auto 1fr;
+      gap:14px;
+    }
+
+    .mini-card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      padding:18px;
+    }
+    .mini-title{
+      font-size:13px;
+      color:var(--muted);
+      margin:0 0 10px;
+    }
+    .mini-card .mail{
+      display:flex; align-items:center; gap:10px;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px dashed var(--line);
+      background:var(--soft);
+      font-size:14px;
+    }
+    .mini-card .mail strong{ font-size:14px; }
+    .mini-card .mail a{ color:var(--accent2); font-weight:700; }
+
+    /* Image placeholders */
+    .img-block{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      padding:14px;
+      display:flex; flex-direction:column; gap:10px;
+      min-height: 250px;
+margin-top:-30px; 
+    }
+    .img-placeholder{
+      flex:1;
+      border-radius:16px;
+      border:1px dashed #cbd5e1;
+      background:
+        linear-gradient(180deg, rgba(241,245,249,.9), rgba(248,250,252,.9)),
+        repeating-linear-gradient(45deg, rgba(148,163,184,.22) 0 12px, rgba(148,163,184,.10) 12px 24px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:18px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.7;
+    }
+    .img-note{
+      color:var(--muted);
+      font-size:12px;
+      margin:0;
+    }
+
+    /* Sections */
+    section{ padding:30px 0; }
+    .section-head{
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap:16px;
+      margin-bottom:14px;
+    }
+    h2{
+      margin:0;
+      font-size:20px;
+      letter-spacing:.03em;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.7;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:14px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      padding:18px;
+    }
+
+    .col-7{ grid-column: span 7; }
+    .col-5{ grid-column: span 5; }
+    .col-6{ grid-column: span 6; }
+    .col-4{ grid-column: span 4; }
+    .col-12{ grid-column: span 12; }
+
+    .list{
+      margin:10px 0 0;
+      padding:0;
+      list-style:none;
+      display:grid;
+      gap:10px;
+    }
+    .li{
+      display:flex; gap:10px; align-items:flex-start;
+      line-height:1.8;
+      font-size:13px;
+      color:var(--muted);
+    }
+    .check{
+      width:18px; height:18px; border-radius:6px;
+      background: rgba(14,165,233,.12);
+      border:1px solid rgba(14,165,233,.26);
+      display:inline-flex; align-items:center; justify-content:center;
+      flex:0 0 auto;
+      margin-top:3px;
+    }
+    .check:before{
+      content:"✓";
+      font-size:12px;
+      color: var(--accent2);
+      font-weight:800;
+      line-height:1;
+    }
+
+    .pill{
+      display:inline-flex;
+      padding:6px 10px;
+      border-radius:999px;
+      background:var(--soft);
+      border:1px solid var(--line);
+      font-size:12px;
+      color:var(--muted);
+      margin:6px 6px 0 0;
+    }
+
+    .table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:#fff;
+    }
+    .table th, .table td{
+      padding:12px 12px;
+      font-size:13px;
+      border-bottom:1px solid var(--line);
+      vertical-align:top;
+    }
+    .table th{
+      background:var(--soft);
+      color:var(--muted);
+      text-align:left;
+      font-weight:700;
+      width: 160px;
+    }
+    .table tr:last-child th, .table tr:last-child td{ border-bottom:none; }
+
+    .notice{
+      border:1px solid rgba(14,165,233,.25);
+      background:rgba(14,165,233,.06);
+      border-radius:16px;
+      padding:14px 14px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.8;
+    }
+    .notice strong{ color:var(--text); }
+
+    /* Footer */
+    footer{
+      padding:26px 0 40px;
+      border-top:1px solid var(--line);
+      background: #ffffff;
+    }
+    .foot{
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+    .small{ font-size:12px; color:var(--muted); line-height:1.7; margin:0; }
+
+    /* Responsive */
+    @media (max-width: 940px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .cta{ min-width: auto; }
+      .brand{ min-width:auto; }
+      .col-7,.col-5,.col-6,.col-4{ grid-column: span 12; }
+    }
+    @media (max-width: 560px){
+      nav ul{ display:none; }
+      .hero h1{ font-size:30px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="nav">
+        <a class="brand" href="#top" aria-label="HCAD Solar Layout Service">
+         <img src="images/logo.png" class="logo">
+          <div class="brand-title">
+            <strong>HCAD Solar Layout Service</strong>
+            <span>AutoCAD 図面作成・トレース</span>
+          </div>
+        </a>
+
+        <nav aria-label="Primary navigation">
+          <ul>
+            <li><a href="#services">サービス</a></li>
+            <li><a href="#solar">太陽光図面</a></li>
+            <li><a href="#trace">トレース</a></li>
+            <li><a href="#flow">進め方</a></li>
+            <li><a href="#deliverables">納品形式</a></li>
+            <li><a href="#contact">お問い合わせ</a></li>
+          </ul>
+        </nav>
+
+        <div class="cta">
+          <a class="btn" href="#contact">見積り相談</a>
+          <a class="btn primary" href="mailto:h.solarlayout@gmail.com?subject=Inquiry%20-%20HCAD%20Solar%20Layout%20Service">
+            メールする
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <div class="hero">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-card">
+            <h1>太陽光発電のレイアウト作図、<br>AutoCADで迅速・丁寧に。</h1>
+            <p>
+              HCAD Solar Layout Service は、AutoCAD を用いた<strong>太陽光発電関連の各種図面作成</strong>と、
+              PDF・手描き図面からの<strong>トレース（CAD化）</strong>を提供します。<br>
+                           小さなご要望にも真摯に向き合い、一つひとつを正確かつ丁寧に仕上げることを大切にしています。<br>
+細部まで妥協せず、安心してお任せいただける図面を作成いたします。<br>
+              連絡は原則<strong>当日中に返信</strong>。土日・祝日も対応可能です。
+            </p>
+
+            <div class="badges" aria-label="Highlights">
+              <span class="badge"><span class="dot" aria-hidden="true"></span>当日中のメッセージ返信</span>
+              <span class="badge">土日・祝日対応</span>
+              <span class="badge">出力：CAD / PDF</span>
+            </div>
+          </div>
+
+          <div class="hero-side">
+           
+            </div>
+
+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICES OVERVIEW -->
+
+    <!-- SOLAR DRAWINGS -->
+    <section id="solar" style="margin-top:-40px;">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>太陽光発電関連図面（詳細）</h2>
+            <p class="sub">レイアウト作図から付随図面まで、用途に応じて作成します。</p>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card col-7">
+            <h3 style="margin:0 0 10px; font-size:16px;"> パネル配置レイアウト（主力サービス）</h3>
+            <ul class="list">
+              <li class="li"><span class="check" aria-hidden="true"></span>屋根：住宅 / 工場 / 倉庫 など各種屋根形状に対応</li>
+              <li class="li"><span class="check" aria-hidden="true"></span>野立て：野立て用地上設置型 / 農業用 / 駐車場用</li>
+              <li class="li"><span class="check" aria-hidden="true"></span>日影計算・影の影響検討（周辺建物・樹木）— CAD（2D）上で影範囲を図面化
+              <li class="li"><span class="check" aria-hidden="true"></span>規模：10kW未満〜1MWまで</li>
+</li>
+            </ul>
+                                       <div style="height:14px"></div>
+
+            <h3 style="margin:0 0 10px; font-size:16px;">作成可能な関連図面</h3>
+            <ul class="list">
+              <li class="li"><span class="check" aria-hidden="true"></span> 架台詳細図：平面・立面・断面</li>
+              <li class="li"><span class="check" aria-hidden="true"></span> 配線図（ケーブルルート・接続の図示）</li>
+            </ul>
+                                       <div style="height:14px"></div>
+
+            <h3 style="margin:0 0 10px; font-size:16px;">配線拾い</h3>
+            <ul class="list">
+              <li class="li"><span class="check" aria-hidden="true"></span> 図面からケーブル長・種類を算出（ご指定条件に基づく）</li>
+          </div>
+
+  <!-- Phải -->
+  <div class="card col-5">
+<div style="text-align:center;">
+ <img src="images/datpin1.png" style="width:100%; height:auto; display:block; border-radius:12px;">
+            </div>
+            <p class="img-note" style="margin-top:10px;">
+<div style="
+  text-align:center;
+  margin-top:12px;
+  line-height:1.5;
+">
+
+  <div style="text-align:center;">
+    <div style="font-weight:600; font-size:16px;">
+      野立て架台による太陽光パネル配置図
+    </div>
+    <div style="color:#64748b; font-size:14px;">
+      （Google Map背景、日影検討、架台断面図を含む）
+    </div>
+  </div>
+</div>    </section>
+<section style="margin-top: -60px;">
+    <!-- TRACE -->
+    <section id="trace">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>図面トレース（PDF・手描き → CAD化）</h2>
+            <p class="sub">既存資料を基に、編集しやすいCADデータへ整えます。</p>
+          </div>
+        </div>
+
+ <div class="grid">
+
+  <!-- Trái -->
+  <div class="card col-7">
+    <h3 style="margin:0 0 10px; font-size:16px;">対応内容</h3>
+    <ul class="list">
+      <li class="li"><span class="check"></span>PDF図面のトレース（CAD化）</li>
+      <li class="li"><span class="check"></span>手描き図面の清書</li>
+      <li class="li"><span class="check"></span>線種・線幅・レイヤー整理（ご希望に合わせる）</li>
+      <li class="li"><span class="check"></span>必要に応じて、注記・寸法の整形</li>
+    </ul>
+  </div>
+
+<!-- Phải -->
+  <div class="card col-5">
+<div style="text-align:center;">
+ <img src="images/trace1.png" style="width:100%; height:auto; display:block; border-radius:12px;">
+            </div>
+            <p class="img-note" style="margin-top:10px;">
+<div style="
+  text-align:center;
+  margin-top:12px;
+  line-height:1.6;
+">
+
+  <div style="
+    font-weight:600;
+    font-size:16px;
+    margin-bottom:2px;
+  ">
+    PDF図面のトレース（CAD化）
+    </p>
+  </div>
+
+</div>
+
+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+<section style="margin-top: -60px;">
+    <!-- FLOW -->
+    <section id="flow">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>ご依頼の流れ</h2>
+            <p class="sub">業務フローに合わせ、明確に進行します。</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="card col-12">
+            <table class="table" aria-label="Flow">
+              <tr>
+                <th>STEP 1</th>
+                <td>
+                  <strong>お問い合わせ</strong><br>
+                  図面データ（PDF / 画像 / CADなど）と、ご要望（用途・納期・出力形式）をお送りください。
+                </td>
+              </tr>
+              <tr>
+                <th>STEP 2</th>
+                <td>
+                  <strong>内容確認・お見積り</strong><br>
+                  作業範囲、必要情報、納期目安を整理し、見積りをご提示します。
+                </td>
+              </tr>
+              <tr>
+                <th>STEP 3</th>
+                <td>
+                  <strong>作図・中間確認（必要時）</strong><br>
+                  重要ポイントは途中共有し、手戻りを最小化します。
+                </td>
+              </tr>
+              <tr>
+                <th>STEP 4</th>
+                <td>
+                  <strong>納品</strong><br>
+                  CADデータ（正規ライセンス）およびPDF等、ご希望の形式で納品します。
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+<section style="margin-top: -60px;">
+    <!-- DELIVERABLES -->
+    <section id="deliverables">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>納品形式</h2>
+            <p class="sub">用途に合わせて、編集可能なデータと確認用PDFをセットでご用意できます。</p>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card col-7">
+            <ul class="list">
+              <li class="li"><span class="check" aria-hidden="true"></span><strong>CADデータ（正規ライセンス）</strong>：AutoCADで作成した図面データ</li>
+              <li class="li"><span class="check" aria-hidden="true"></span><strong>PDF</strong>：共有・確認用の書き出し</li>
+              <li class="li"><span class="check" aria-hidden="true"></span>ご希望により、レイヤー構成・図枠・尺度など運用に合わせて調整</li>
+            </ul>
+          </div>
+
+          <div class="card col-5">
+            <h3 style="margin:0 0 10px; font-size:16px;">メモ</h3>
+            <p class="sub" style="margin-top:0;">
+              図面の品質は、元データ（PDFの解像度、手描きの読みやすさ等）に影響されます。
+              可能な範囲で最適化し、必要情報が不足する場合は確認します。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+<section style="margin-top: -60px;">
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>お問い合わせ</h2>
+            <p class="sub">ご相談・お見積り依頼はメールで受け付けています。</p>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card col-7">
+            <h3 style="margin:0 0 10px; font-size:16px;">メール</h3>
+            <p class="sub" style="margin-top:0;">
+              可能であれば、下記を添えてお送りください：<br>
+              ・図面データ（PDF/画像/CAD）<br>
+              ・作業範囲（レイアウト/架台詳細/配線/トレース等）<br>
+              ・希望納期、出力形式（CAD/PDF）<br>
+            </p>
+
+            <div style="height:10px"></div>
+
+            <a class="btn primary" style="width:100%; justify-content:center;"
+               href="mailto:h.solarlayout@gmail.com?subject=Inquiry%20-%20HCAD%20Solar%20Layout%20Service&body=%E3%80%90%E3%81%94%E7%9B%B8%E8%AB%87%E5%86%85%E5%AE%B9%E3%80%91%0A%E3%83%BB%E4%BE%9D%E9%A0%BC%E7%A8%AE%E5%88%A5%EF%BC%9A%EF%BC%88%E5%A4%AA%E9%99%BD%E5%85%89%E5%9B%B3%E9%9D%A2%20/%20%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B9%EF%BC%89%0A%E3%83%BB%E4%BD%9C%E6%A5%AD%E7%AF%84%E5%9B%B2%EF%BC%9A%0A%E3%83%BB%E8%A6%8F%E6%A8%A1%EF%BC%9A%EF%BC%88kW%EF%BC%89%0A%E3%83%BB%E7%B4%8D%E6%9C%9F%EF%BC%9A%0A%E3%83%BB%E7%B4%8D%E5%93%81%E5%BD%A2%E5%BC%8F%EF%BC%9A%EF%BC%88CAD%20/%20PDF%EF%BC%89%0A%E3%83%BB%E5%82%99%E8%80%83%EF%BC%9A">
+              h.solarlayout@gmail.com にメールする
+            </a>
+          </div>
+
+          <div class="card col-5">
+            <h3 style="margin:0 0 10px; font-size:16px;">対応時間の目安</h3>
+            <div class="notice" style="margin:0;">
+              ・原則：当日中に返信<br>
+              ・土日・祝日：対応可<br>
+              ・短納期：まずはご相談ください
+            </div>
+
+            <div style="height:12px"></div>
+
+            <div class="img-block">
+  <img src="images/anhvp1.png" 
+       style="width:100%; height:auto; border-radius:12px;">
+</div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
+
+<section style="margin-bottom:-40px;">
+  <div class="container">
+
+    <!-- Slider box -->
+    <div class="card col-12">
+
+      <div class="slider">
+  <img src="images/sutoring1.png" class="slide" data-caption="ストリング配線図">
+
+  <img src="images/datpin2.png" class="slide active" data-caption="陸屋根太陽光発電レイアウト図">
+
+  <img src="images/datpin3.png" class="slide" data-caption="折板屋根太陽光発電レイアウト図">
+
+  <img src="images/datpin4.png" class="slide" data-caption="野立て太陽光発電レイアウト図">
+<div id="caption" style="text-align:center; margin-top:10px; font-size:18px; font-weight:600; color:#334155;">  陸屋根太陽光発電レイアウト図
+</div>
+</div>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+  <footer>
+    <div class="container">
+      <div class="foot">
+        <div>
+          <p class="small" style="margin:0 0 6px;"><strong>HCAD Solar Layout Service</strong></p>
+          <p class="small" style="margin:0;">
+            AutoCAD 図面作成（太陽光発電レイアウト・架台詳細・配線図）／図面トレース（PDF・手描き）
+          </p>
+        </div>
+        <div style="text-align:right;">
+          <p class="small" style="margin:0 0 6px;">Contact</p>
+          <p class="small" style="margin:0;">
+            <a href="mailto:h.solarlayout@gmail.com?subject=Inquiry%20-%20HCAD%20Solar%20Layout%20Service">h.solarlayout@gmail.com</a>
+          </p>
+          <p class="small" style="margin-top:10px;">© <span id="year"></span> HCAD Solar Layout Service</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+<script>
+let slides = document.querySelectorAll(".slide");
+let caption = document.getElementById("caption");
+
+let index = 0;
+
+setInterval(() => {
+
+  slides[index].classList.remove("active");
+
+  index = (index + 1) % slides.length;
+
+  slides[index].classList.add("active");
+
+  caption.textContent = slides[index].dataset.caption;
+
+}, 3000);
+</script><script>
+let index = 0;
+const slides = document.querySelectorAll(".slide");
+
+setInterval(()=>{
+  slides[index].classList.remove("active");
+
+  index++;
+  if(index >= slides.length){
+    index = 0;
+  }
+
+  slides[index].classList.add("active");
+
+}, 1500);
+</script>
+</body>
+</html>
