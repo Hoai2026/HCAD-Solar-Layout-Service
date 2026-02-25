@@ -805,8 +805,26 @@ setInterval(()=>{
 
 }, 1500);
 </script>
+<script>
+function openMailFallback(e){
+  // Always open Gmail compose in a new tab (works even if mailto is not configured)
+  const to = "h.solarlayout@gmail.com";
+  const subject = "Inquiry - HCAD Solar Layout Service";
+  const body = "【ご相談内容】\n・依頼種別：\n・作業範囲：\n・納期：\n・納品形式：\n";
+
+  const gmailUrl =
+    "https://mail.google.com/mail/?view=cm&fs=1" +
+    "&to=" + encodeURIComponent(to) +
+    "&su=" + encodeURIComponent(subject) +
+    "&body=" + encodeURIComponent(body);
+
+  window.open(gmailUrl, "_blank", "noopener");
+  return false; // prevent default mailto (because it does nothing on your PC)
+}
+</script>
 </body>
 </html>
+
 
 
 
